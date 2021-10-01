@@ -42,6 +42,8 @@ node.js가 필요합니다. [설치 링크](https://nodejs.org/ko/download/)
   npm run dev
   ```
 
+- 여기까지 하면 localhost:3000으로 서버가 열립니다.
+
 - 추가적으로 chrome 브라우저로 실행시, 다른 PC에서 접속 브라우저 내부적으로 http 사용시 mediaDevices를 통해 사용자 장치를 불러오지 않습니다. 즉 최신 크롬에선 안전하지 않을경우인 https가 아닐경우 mediaDevices 객체를 제공하지 않습니다.
 - 그래서 테스트용으로 로컬에서 구동시 서버를 돌리는 PC가 아닌 기기에서는 아래와 같이 설정에서 허용을 해줘야 합니다.
 - ![이미지](./img.png)
@@ -63,5 +65,27 @@ node.js가 필요합니다. [설치 링크](https://nodejs.org/ko/download/)
 `/src/server.js`
 
 - 서버입니다. 클라이언트로부터 요청을 받고 이에 따른 소켓통신 또는 http 통신응답을 중개해줍니다.
+
+### 필요했던 개념
+
+##### Web API
+
+Navigator - 미디어스트림 가져올때 - 사용자 비디오, 오디오 컨트롤
+
+##### WebRTC
+
+- 사용자끼리 peer to peer의 형태로 연결해 서버에 서의 부하를 클라이언트로 분산
+- - 단 서로의 위치를 인식하기위한 socket통신으로 시그널링단계를 거친 이후부터 가능
+
+##### 시그널링
+
+방 입장 -> Offer 생성(peer A) -> 서버로 Offer 전송 -> offer받고 remoteDescription등록(peer B) -> 미디어 스트림 추가하고 Answer생성후 LocalDescription등록(peer B) -> Answer 서버를 통해 다시 peer A에 전송 -> remoteDescription등록(peer A)
+
+여기까지가 시그널링입니다.
+
+이후 peer간 통신을 위해 icecandidate이벤트를 생성해 peer끼리 교환
+(iceCandidate는 브라우저간의 통신을 위한 이벤트입니다.)
+
+그리고 addstream이라는 이벤트로 내 미디어,오디어 스트림을 서로 통신합니다.
 
 ![](Signaling.png)
